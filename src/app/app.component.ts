@@ -7,4 +7,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'mean-course';
+  posts = [];
+  addPost(event) {
+    this.posts.push(event);
+  }
 }
