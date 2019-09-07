@@ -18,6 +18,7 @@
   </mat-expansion-panel>
 </mat-accordion>
 <mat-paginator 
+  *ngIf="posts$ | async"
   [length]="totalPosts" [pageSize]="postsPerPage" [pageSizeOptions]="pageSizeOptions"
   (page)="onChangePage($event)"
   ></mat-paginator>

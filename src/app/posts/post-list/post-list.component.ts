@@ -1,8 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Post } from '../post.model';
 import { PostsService } from 'src/app/posts.service';
-import { Observable } from 'rxjs';
+import { Observable, pipe } from 'rxjs';
 import { PageEvent } from '@angular/material';
+import { tap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-post-list',
@@ -12,21 +13,31 @@ import { PageEvent } from '@angular/material';
 export class PostListComponent implements OnInit {
   totalPosts = 10;
   postsPerPage = 2;
+  currentPage = 1;
   pageSizeOptions = [2, 5, 10];
   posts$: Observable<Post[]>;
   constructor(private postsService: PostsService) {
   }
 
   ngOnInit() {
-    this.postsService.getPosts();
-    this.posts$ = this.postsService.getPostUpdateListener();
+    // this.totalPosts = this.postsPerPage;
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
+    this.posts$ = this.postsService.getPostUpdateListener().pipe(
+      tap((data: any) => this.totalPosts = data.postCount),
+      map(data => data.posts)
+    );
   }
 
   onPostDelete(id: string) {
-    this.postsService.deletePost(id);
+    this.postsService.deletePost(id).subscribe(() => {
+      this.postsService.getPosts(this.postsPerPage, this.currentPage);
+    });
   }
 
-  onPageChange(pageData: PageEvent) {
-
+  onChangePage(pageData: PageEvent) {
+    // this.totalPosts = this.postsPerPage;
+    this.currentPage = pageData.pageIndex + 1;
+    this.postsPerPage = pageData.pageSize;
+    this.postsService.getPosts(this.postsPerPage, this.currentPage);
   }
 }
