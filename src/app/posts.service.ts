@@ -27,6 +27,7 @@ export class PostsService {
     )
       .subscribe(data => {
         this.posts = data.posts;
+        console.log(data.posts);
         this.postsUpdated.next({posts: [...this.posts], postCount: data.maxPosts});
       });
     // return [...this.posts];
@@ -60,7 +61,7 @@ export class PostsService {
       postData.append('content', post.content);
       postData.append('image', post.imagePath);
     } else {
-      postData = post;
+      postData = {...post, creator: null};
     }
     this.http.put<{message: string, post: Post}>('http://localhost:3000/api/posts' + post.id, postData)
       .subscribe(response => {

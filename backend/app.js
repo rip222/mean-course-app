@@ -58,7 +58,8 @@ app.post(
   const post = new Post({
     title: req.body.title,
     content: req.body.content,
-    imagePath: url + '/images/' + req.file.filename
+    imagePath: url + '/images/' + req.file.filename,
+    creator: req.userData.userId // this comes from checkAuth middleware
   });
   post.save().then(result => {
     res.status(201).json({
@@ -121,19 +122,28 @@ app.put(
     _id: req.body.id,
     title: req.body.title,
     content: req.body.content,
-    imagePath: imagePath
+    imagePath: imagePath,
+    creator: req.userData.userId
   })
-  Post.updateOne({_id: req.params.id}, post)
+  Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post)
     .then(result => {
-      res.status(200).json({message: 'Update successful', post: post})
+      if (result.n > 0) {
+        res.status(200).json({message: 'Update successful', post: post})
+      } else {
+        res.status(401).json({message: 'Not Authorized'})
+      }
     })
 })
 
 app.delete('/api/posts:id', checkAuth, (req, res, next) => {
   const id = req.params.id;
-  Post.deleteOne({_id: id})
-    .then(_ => {
-      res.status(200).json({message: 'Post deleted'})
+  Post.deleteOne({_id: id, creator: req.userData.userId})
+    .then(result => {
+      if (result.n > 0) {
+        res.status(200).json({message: 'Post deleted'})
+      } else {
+        res.status(401).json({message: 'Not Authorized'})
+      }
     })
 })
 

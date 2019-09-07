@@ -17,6 +17,7 @@ export class PostListComponent implements OnInit {
   postsPerPage = 2;
   currentPage = 1;
   pageSizeOptions = [2, 5, 10];
+  userId: string;
   posts$: Observable<Post[]>;
   constructor(private postsService: PostsService, private authService: AuthService) {
   }
@@ -26,9 +27,14 @@ export class PostListComponent implements OnInit {
     this.isAuth = this.authService.getAuthStatusListener();
     this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.posts$ = this.postsService.getPostUpdateListener().pipe(
-      tap((data: any) => this.totalPosts = data.postCount),
+      tap((data: any) => {
+        this.totalPosts = data.postCount;
+        this.userId = this.authService.getUserId();
+      }),
       map(data => data.posts)
     );
+    this.userId = this.authService.getUserId();
+    console.log(this.userId);
   }
 
   onPostDelete(id: string) {
