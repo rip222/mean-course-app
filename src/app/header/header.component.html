@@ -3,7 +3,16 @@
   <span class="spacer"></span>
   <ul>
     <li>
-      <a mat-button routerLinkActive="mat-accent" [routerLink]="[ '/create']">Create Post</a>
+      <a *ngIf="isAuth | async" mat-button routerLinkActive="mat-accent" [routerLink]="[ '/create']">Create Post</a>
+    </li>
+    <li>
+      <a *ngIf="!(isAuth | async)" mat-button routerLinkActive="mat-accent" [routerLink]="[ '/login']">Login</a>
+    </li>
+    <li>
+      <a *ngIf="!(isAuth | async)" mat-button routerLinkActive="mat-accent" [routerLink]="[ '/signup']">Sign Up</a>
+    </li>
+    <li>
+      <button *ngIf="isAuth | async" mat-button routerLinkActive="mat-accent" (click)="onLogout()">Logout</button>
     </li>
   </ul>
 </mat-toolbar>

@@ -4,9 +4,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const multer = require('multer');
+const cors = require('cors');
 
 const Post = require('./models/post');
-
+const userRoutes = require('./routes/user')
+const checkAuth = require('./middleware/check-auth');
 const app = express();
 
 const MIME_TYPE_MAP = {
@@ -30,7 +32,7 @@ const storage = multer.diskStorage({
   }
 })
 
-mongoose.connect('mongodb+srv://rip222:SOwMjjrVb1HdurPG@cluster0-phzt4.mongodb.net/node-angular?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://rip222:SOwMjjrVb1HdurPG@cluster0-phzt4.mongodb.net/node-angular&w=majority')
   .then(_ => console.log('Connected to database'))
   .catch(error => console.log(error))
 
@@ -40,12 +42,18 @@ app.use('/images', express.static(path.join('backend/images')))
 
 app.use('/', (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Request-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Request-With, Content-Type, Accept, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
   next();
 })
 
-app.post('/api/posts', multer({storage: storage}).single('image'), (req, res, next) => {
+app.use('/api/user', userRoutes);
+
+app.post(
+  '/api/posts',
+  checkAuth,
+  multer({storage: storage}).single('image'), 
+  (req, res, next) => {
   const url = req.protocol + '://' + req.get('host');
   const post = new Post({
     title: req.body.title,
@@ -99,7 +107,11 @@ app.get('/api/posts:id', (req, res, next) => {
     })
 })
 
-app.put('/api/posts:id', multer({storage: storage}).single('image'), (req, res, next) => {
+app.put(
+  '/api/posts:id', 
+  checkAuth,
+  multer({storage: storage}).single('image'), 
+  (req, res, next) => {
   let imagePath = req.body.imagePath;
   if (req.file) {
     const url = req.protocol + '://' + req.get('host');
@@ -117,7 +129,7 @@ app.put('/api/posts:id', multer({storage: storage}).single('image'), (req, res, 
     })
 })
 
-app.delete('/api/posts:id', (req, res, next) => {
+app.delete('/api/posts:id', checkAuth, (req, res, next) => {
   const id = req.params.id;
   Post.deleteOne({_id: id})
     .then(_ => {
