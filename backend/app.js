@@ -69,7 +69,12 @@ app.post(
         id: result._id,
       }
     })
-  });
+  })
+  .catch(error => {
+    res.status(500).json({
+      message: 'Creating post failed'
+    })
+  })
 })
 
 app.get('/api/posts', (req, res, next) => {
@@ -94,7 +99,11 @@ app.get('/api/posts', (req, res, next) => {
         maxPosts: count
       })
     })
-    .catch(error => console.error(error)) 
+    .catch(error => {
+      res.status(500).json({
+        message: 'Fetching posts failed'
+      })
+    }) 
 });
 
 app.get('/api/posts:id', (req, res, next) => {
@@ -106,6 +115,11 @@ app.get('/api/posts:id', (req, res, next) => {
         res.status(404).json({message: 'Post not found!'})
       }
     })
+    .catch(error => {
+      res.status(500).json({
+        message: 'Fetching post failed'
+      })
+    }) 
 })
 
 app.put(
@@ -133,6 +147,11 @@ app.put(
         res.status(401).json({message: 'Not Authorized'})
       }
     })
+    .catch(error => {
+      res.status(500).json({
+        message: 'Could not update post'
+      })
+    })
 })
 
 app.delete('/api/posts:id', checkAuth, (req, res, next) => {
@@ -145,6 +164,11 @@ app.delete('/api/posts:id', checkAuth, (req, res, next) => {
         res.status(401).json({message: 'Not Authorized'})
       }
     })
+    .catch(error => {
+      res.status(500).json({
+        message: 'Deleting post failed'
+      })
+    }) 
 })
 
 module.exports = app;

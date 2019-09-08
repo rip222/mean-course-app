@@ -1,6 +1,6 @@
 <mat-card>
-  <mat-spinner *ngIf="isLoading"></mat-spinner>
-  <form (ngSubmit)="onSignUp(singUpForm)" #singUpForm="ngForm" *ngIf="!isLoading">
+  <mat-spinner *ngIf="isAuth | async"></mat-spinner>
+  <form (ngSubmit)="onSignUp(singUpForm)" #singUpForm="ngForm" *ngIf="!(isAuth | async)">
 
     <mat-form-field>
       <input type="email" matInput placeholder="Email" name="email"  aria-label="Title" #email="ngModel" ngModel email required>

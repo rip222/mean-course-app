@@ -12,6 +12,7 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
+    this.authService.getAuthStatusListener().subscribe(data => this.isLoading = data);
   }
 
   onLogin(form: NgForm) {

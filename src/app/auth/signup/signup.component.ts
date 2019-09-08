@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-signup',
@@ -8,10 +9,11 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./signup.component.sass']
 })
 export class SignupComponent implements OnInit {
-
+  isAuth: Observable<boolean>;
   constructor(public authService: AuthService) { }
 
   ngOnInit() {
+    this.isAuth = this.authService.getAuthStatusListener();
   }
 
   onSignUp(form: NgForm) {
