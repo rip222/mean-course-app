@@ -6,10 +6,10 @@
       <a *ngIf="isAuth | async" mat-button routerLinkActive="mat-accent" [routerLink]="[ '/create']">Create Post</a>
     </li>
     <li>
-      <a *ngIf="!(isAuth | async)" mat-button routerLinkActive="mat-accent" [routerLink]="[ '/login']">Login</a>
+      <a *ngIf="!(isAuth | async)" mat-button routerLinkActive="mat-accent" [routerLink]="[ '/auth/login']">Login</a>
     </li>
     <li>
-      <a *ngIf="!(isAuth | async)" mat-button routerLinkActive="mat-accent" [routerLink]="[ '/signup']">Sign Up</a>
+      <a *ngIf="!(isAuth | async)" mat-button routerLinkActive="mat-accent" [routerLink]="[ '/auth/signup']">Sign Up</a>
     </li>
     <li>
       <button *ngIf="isAuth | async" mat-button routerLinkActive="mat-accent" (click)="onLogout()">Logout</button>

@@ -4,6 +4,9 @@ import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
+
+const BACKEND_URL = `${environment.apiUrl}/posts`;
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +18,7 @@ export class PostsService {
 
   getPosts(postsPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
-    this.http.get<{message: string, posts: any[], maxPosts: number}>('http://localhost:3000/api/posts' + queryParams).pipe(
+    this.http.get<{message: string, posts: any[], maxPosts: number}>(BACKEND_URL + queryParams).pipe(
       map(data => {
         return {
           posts: data.posts.map(post => {
@@ -34,7 +37,7 @@ export class PostsService {
   }
 
   getPost(id: string) {
-    return this.http.get<{_id: string, title: string, content: string}>('http://localhost:3000/api/posts' + id);
+    return this.http.get<{_id: string, title: string, content: string}>(BACKEND_URL + id);
   }
 
   getPostUpdateListener() {
@@ -46,7 +49,7 @@ export class PostsService {
     postData.append('title', post.title);
     postData.append('content', post.content);
     postData.append('image', image, post.title);
-    this.http.post<{message: string; post: Post}>('http://localhost:3000/api/posts', postData)
+    this.http.post<{message: string; post: Post}>(BACKEND_URL, postData)
       .subscribe(data => {
         this.router.navigate(['/']);
       });
@@ -63,7 +66,7 @@ export class PostsService {
     } else {
       postData = {...post, creator: null};
     }
-    this.http.put<{message: string, post: Post}>('http://localhost:3000/api/posts' + post.id, postData)
+    this.http.put<{message: string, post: Post}>(BACKEND_URL + post.id, postData)
       .subscribe(response => {
 
         this.router.navigate(['/']);
@@ -71,6 +74,6 @@ export class PostsService {
   }
 
   deletePost(id: string) {
-    return this.http.delete<{message: string}>('http://localhost:3000/api/posts' + id);
+    return this.http.delete<{message: string}>(BACKEND_URL + id);
   }
 }
